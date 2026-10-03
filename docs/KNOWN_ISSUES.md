@@ -5,7 +5,7 @@ This repository is a refactoring of the scripts used for the paper (kept unchang
 Each entry gives the location in this package, the location in the original scripts, a description, and the impact.
 
 Original scripts:
-- `legacy/torchPix2Pix_AblationM2_M8.py`: PC-CGAN training (M2-M8).
+- `legacy/torchPCCGAN_AblationM2_M8.py`: PC-CGAN training (M2-M8).
 - `legacy/evaluate_ablation_unified.py`: PC-CGAN evaluation.
 - `legacy/diffComplexField_ROI256_D1_D4.py`: diffusion training and sampling (D1-D4).
 - `legacy/complex_field_utils.py`: shared preprocessing.
@@ -14,13 +14,13 @@ Original scripts:
 
 ### 1.1 Phase losses and validation metrics use the shifted [0, 1] representation
 
-- **Files / functions:** `octmirror/losses.py` (`phase_circular_loss`, `phase_gradient_loss`), `octmirror/training.py` (`validate_fn`, phase term in `train_diffusion`). Originals: same names in `torchPix2Pix_AblationM2_M8.py` and `complex_field_utils.py`; `train()` in `diffComplexField_ROI256_D1_D4.py`.
+- **Files / functions:** `octmirror/losses.py` (`phase_circular_loss`, `phase_gradient_loss`), `octmirror/training.py` (`validate_fn`, phase term in `train_diffusion`). Originals: same names in `torchPCCGAN_AblationM2_M8.py` and `complex_field_utils.py`; `train()` in `diffComplexField_ROI256_D1_D4.py`.
 - **Description:** `log_scale` maps the real and imaginary parts from [-1, 1] to [0, 1] (`(x + 1) / 2`). The phase losses compute `atan2(imag, real)` and the weights `sqrt(real**2 + imag**2)` directly on these [0, 1] channels, without mapping them back to [-1, 1]. The measured angle is therefore the angle of the point `((Re+1)/2, (Im+1)/2)` around the origin, which lies in [0, pi/2] and depends on both amplitude and phase of the normalized field. It is not the phase of the field. The amplitude loss in `train_fn` does map back to [-1, 1] first (`_compute_amp`), so the two terms use different conventions. The same applies to `amp_mae` and `phase_mae` in `validate_fn`, and to the phase loss on the predicted x0 in the diffusion training (D2-D4).
 - **Impact:** the "phase" term constrains a quantity that mixes amplitude and phase. The M2-M8 and D1-D4 ablations measure the effect of this term as implemented. `val_amp_mae` (used to select `G_best.pth` and to drive the learning-rate scheduler) is the MAE of the modulus of the shifted vector, not of the normalized amplitude. Check that the description of the loss in the paper matches this implementation.
 
 ### 1.2 PC-CGAN EMA: updated once per epoch, parameters only, and it drives model selection
 
-- **Files / functions:** `octmirror/training.py` (`update_ema`, `train_loop`, `validate_fn`). Originals: same names in `torchPix2Pix_AblationM2_M8.py`.
+- **Files / functions:** `octmirror/training.py` (`update_ema`, `train_loop`, `validate_fn`). Originals: same names in `torchPCCGAN_AblationM2_M8.py`.
 - **Description:**
   - `update_ema` is called once per epoch, not once per iteration. With `decay = 0.999` and 300 epochs, the weight left on the initial (random) parameters at the end of training is `0.999**300 = 0.74`. The EMA generator stays close to its random initialization for the whole run.
   - Only parameters are averaged. BatchNorm buffers (`running_mean`, `running_var`) of the EMA copy keep the values they had when it was created (before training), and the EMA generator is evaluated in `eval()` mode with those statistics.
@@ -30,7 +30,7 @@ Original scripts:
 
 ### 1.3 Train/validation split before seeding, and per B-scan
 
-- **Files / functions:** `octmirror/datasets.py` (`build_pccgan_datasets`), `scripts/train_pccgan.py`. Original: module-level code in `torchPix2Pix_AblationM2_M8.py`.
+- **Files / functions:** `octmirror/datasets.py` (`build_pccgan_datasets`), `scripts/train_pccgan.py`. Original: module-level code in `torchPCCGAN_AblationM2_M8.py`.
 - **Description:** the original script calls `random.shuffle(indices)` before any seed is set (the seed is set later, per configuration), so the 90/10 split of the original runs cannot be reproduced. The refactored code seeds the split with `split_seed` (0 in all configs), which produces a different partition from the original runs. `split_seed: null` restores the unseeded behaviour. The split is per B-scan: B-scans of all volumes are pooled before splitting, so neighbouring B-scans of the same volume appear in both training and validation.
 - **Impact:** retraining with this code gives a different internal validation set than the original runs. The internal validation set is optimistic (correlated with training data). It only affects model selection and the learning-rate schedule; the results in the paper are computed on a separate, independent validation set.
 

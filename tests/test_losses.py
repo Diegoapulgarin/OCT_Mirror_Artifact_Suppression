@@ -6,7 +6,7 @@ import torch
 from legacy_loader import load_legacy
 from octmirror.losses import hinge_d_loss, hinge_g_loss, phase_circular_loss, phase_gradient_loss
 
-GAN = "torchPix2Pix_AblationM2_M8.py"
+GAN = "torchPCCGAN_AblationM2_M8.py"
 
 
 def _complex_pair(seed=0, shape=(2, 16, 12)):

@@ -22,7 +22,7 @@ from octmirror.training import (
     validate_fn,
 )
 
-GAN = "torchPix2Pix_AblationM2_M8.py"
+GAN = "torchPCCGAN_AblationM2_M8.py"
 DIFF = "diffComplexField_ROI256_D1_D4.py"
 
 

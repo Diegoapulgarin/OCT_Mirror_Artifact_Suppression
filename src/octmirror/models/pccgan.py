@@ -9,18 +9,6 @@ import torch.nn as nn
 
 
 class UNetGenerator(nn.Module):
-    """pix2pix U-Net generator (replicates an earlier TensorFlow implementation).
-
-    Encoder: 6 stride-2 blocks plus a bottleneck. Decoder: 6 blocks with skip
-    connections plus an output layer with a sigmoid, so the output lies in [0, 1] like
-    the normalized log-scale representation. With a 512 x 512 input, the bottleneck is
-    4 x 4.
-
-    Args:
-        in_ch: Input channels (2: real, imag).
-        out_ch: Output channels (2: real, imag).
-        use_dropout: Dropout (p=0.5) in the first three decoder blocks.
-    """
 
     def __init__(self, in_ch: int = 2, out_ch: int = 2, use_dropout: bool = True):
         super().__init__()
@@ -95,15 +83,6 @@ class UNetGenerator(nn.Module):
 
 
 class PatchGANDiscriminator(nn.Module):
-    """Conditional PatchGAN discriminator.
-
-    Conv(64,s2) -> Conv(128,s2) -> Conv(256,s2) -> Conv(512,s2) -> Conv(512,s1) -> Conv(1,s1),
-    ReLU activations (as in the TensorFlow version; the original pix2pix uses LeakyReLU),
-    BatchNorm in every block except the first.
-
-    Args:
-        in_ch: Channels of each of the two inputs (they are concatenated).
-    """
 
     def __init__(self, in_ch: int = 2):
         super().__init__()

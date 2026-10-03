@@ -16,7 +16,7 @@ from octmirror.preprocessing import (
 
 LEGACY_SOURCES = [
     "complex_field_utils.py",
-    "torchPix2Pix_AblationM2_M8.py",
+    "torchPCCGAN_AblationM2_M8.py",
     "evaluate_ablation_unified.py",
 ]
 
@@ -76,7 +76,7 @@ def test_log_scale_matches_legacy(source, as_channels):
         np.testing.assert_array_equal(a, b)
 
 
-@pytest.mark.parametrize("source", ["torchPix2Pix_AblationM2_M8.py", "evaluate_ablation_unified.py"])
+@pytest.mark.parametrize("source", ["torchPCCGAN_AblationM2_M8.py", "evaluate_ablation_unified.py"])
 def test_inverse_log_scale_without_clip_matches_pccgan_legacy(source):
     legacy = load_legacy(source, ["inverseLogScale"])
     rng = np.random.default_rng(4)
