@@ -218,3 +218,11 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Project: model weights, run outputs and data arrays
+*.pth
+*.pt
+runs/
+outputs/
+*.npy
+!data/sample_volumes/*.npy

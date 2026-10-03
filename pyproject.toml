@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "octmirror"
+version = "0.1.0"
+description = "Complex-domain deep learning for mirror artifact suppression in Fourier-domain OCT (PC-CGAN and conditional diffusion)."
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [
+    { name = "Diego Pulgarin" },
+    { name = "Sebastian Ruiz-Lopera" },
+    { name = "Juan Jose Cadavid-Munoz" },
+    { name = "Carlos Trujillo" },
+    { name = "Rene Restrepo" },
+]
+dependencies = [
+    "torch>=2.3",
+    "numpy",
+    "scipy",
+    "scikit-image",
+    "opencv-python",
+    "pandas",
+    "matplotlib",
+    "tqdm",
+    "einops",
+    "timm",
+    "pyyaml",
+]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[project.urls]
+Repository = "https://github.com/Diegoapulgarin/OCT_Mirror_Artifact_Suppression"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

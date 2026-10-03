@@ -1,0 +1,12 @@
+torch>=2.3
+numpy
+scipy
+scikit-image
+opencv-python
+pandas
+matplotlib
+tqdm
+einops
+timm
+pyyaml
+pytest

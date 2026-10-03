@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below. The paper is under review; the preferred citation will be added upon acceptance."
+title: "OCT_Mirror_Artifact_Suppression"
+type: software
+authors:
+  - family-names: "Pulgarín"
+    given-names: "Diego"
+    affiliation: "EAFIT University"
+  - family-names: "Ruiz-Lopera"
+    given-names: "Sebastian"
+  - family-names: "Cadavid-Muñoz"
+    given-names: "Juan José"
+    affiliation: "EAFIT University"
+  - family-names: "Trujillo"
+    given-names: "Carlos"
+    affiliation: "EAFIT University"
+  - family-names: "Restrepo"
+    given-names: "René"
+    affiliation: "EAFIT University"
+repository-code: "https://github.com/Diegoapulgarin/OCT_Mirror_Artifact_Suppression"
+abstract: "Code for the paper 'Amplitude-Phase Trade-offs in Deep Learning Reconstruction for Mirror Artifact Suppression in Optical Coherence Tomography'."
+keywords:
+  - optical coherence tomography
+  - complex conjugate artifact removal
+  - generative adversarial networks
+  - diffusion models
