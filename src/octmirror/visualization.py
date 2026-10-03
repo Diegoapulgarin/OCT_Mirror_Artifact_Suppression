@@ -181,3 +181,24 @@ def plot_training_curves(result: Mapping[str, Sequence[float]], savePath: str) -
     plt.savefig(os.path.join(savePath, 'training_curves.png'), dpi=150)
     plt.close(fig)
     print(f"Training curves saved to {os.path.join(savePath, 'training_curves.png')}")
+
+
+def save_amplitude_phase_png(cx: np.ndarray, amplitude_path: str, phase_path: str,
+                             title: Optional[str] = None) -> None:
+    """Save the amplitude in dB (``20*log10|cx|``) and the phase of a complex B-scan as PNGs."""
+    intensity = 20 * np.log10(np.abs(cx) + 1e-12)
+    fig, ax = plt.subplots(figsize=(6, 6))
+    im = ax.imshow(intensity, cmap='gray')
+    fig.colorbar(im, ax=ax, label='Amplitude (dB)')
+    ax.set_title(f"{title} - amplitude" if title else "Amplitude")
+    ax.axis('off')
+    fig.savefig(amplitude_path, dpi=150, bbox_inches='tight')
+    plt.close(fig)
+
+    fig, ax = plt.subplots(figsize=(6, 6))
+    im = ax.imshow(np.angle(cx), cmap='twilight', vmin=-np.pi, vmax=np.pi)
+    fig.colorbar(im, ax=ax, label='Phase (rad)')
+    ax.set_title(f"{title} - phase" if title else "Phase")
+    ax.axis('off')
+    fig.savefig(phase_path, dpi=150, bbox_inches='tight')
+    plt.close(fig)
