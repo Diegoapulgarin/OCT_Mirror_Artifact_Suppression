@@ -5,7 +5,8 @@ All functions save figures to disk with the non-interactive Agg backend.
 from __future__ import annotations
 
 import os
-from typing import Callable, Dict, Mapping, Optional, Sequence, Tuple
+import traceback
+from typing import Callable, Mapping, Optional, Sequence, Tuple
 
 import matplotlib
 
@@ -202,3 +203,69 @@ def save_amplitude_phase_png(cx: np.ndarray, amplitude_path: str, phase_path: st
     ax.axis('off')
     fig.savefig(phase_path, dpi=150, bbox_inches='tight')
     plt.close(fig)
+
+
+TRAINING_CURVE_METRICS = ['loss_g', 'val_amp_mae', 'val_phase_mae', 'train_phase', 'train_phase_grad', 'train_amp']
+
+
+def build_training_curve_plots(ablation_root: str, config_names: Sequence[str], out_dir: str,
+                               metrics: Sequence[str] = TRAINING_CURVE_METRICS,
+                               log_error: Callable[[str], None] = print) -> None:
+    """One figure per training metric overlaying every configuration's ``metrics_epoch.csv``."""
+    os.makedirs(out_dir, exist_ok=True)
+    for metric in metrics:
+        try:
+            fig, ax = plt.subplots(figsize=(8, 6))
+            for config_name in config_names:
+                csv_path = os.path.join(ablation_root, config_name, 'metrics_epoch.csv')
+                if not os.path.exists(csv_path):
+                    log_error(f"Missing metrics_epoch.csv for {config_name}, skipping in {metric} plot.")
+                    continue
+                df = pd.read_csv(csv_path)
+                if metric not in df.columns:
+                    log_error(f"Column {metric} missing in {csv_path}, skipping.")
+                    continue
+                ax.plot(df['epoch'], df[metric], label=config_name)
+            ax.set_xlabel('Epoch')
+            ax.set_ylabel(metric)
+            ax.set_title(f'Unified training curve: {metric}')
+            ax.legend(fontsize=8)
+            ax.grid(True)
+            out_path = os.path.join(out_dir, f'unified_{metric}.png')
+            fig.savefig(out_path, dpi=150)
+            plt.close(fig)
+            print(f"Saved {out_path}")
+        except Exception as ex:
+            log_error(f"Failed to build unified training curve plot for {metric}: {ex}\n{traceback.format_exc(limit=5)}")
+
+
+def build_metric_boxplots(per_bscan_df: pd.DataFrame, config_names: Sequence[str], out_dir: str,
+                          metrics: Sequence[str], checkpoint_type: str = 'G_best',
+                          log_error: Callable[[str], None] = print) -> None:
+    """One box plot per evaluation metric across configurations (per-B-scan values)."""
+    os.makedirs(out_dir, exist_ok=True)
+    for metric in metrics:
+        try:
+            data_per_config = []
+            labels = []
+            for config_name in config_names:
+                subset = per_bscan_df[
+                    (per_bscan_df['config'] == config_name) &
+                    (per_bscan_df['checkpoint_type'] == checkpoint_type)
+                ]
+                values = subset[metric].dropna().values
+                data_per_config.append(values)
+                labels.append(config_name)
+
+            fig, ax = plt.subplots(figsize=(10, 6))
+            ax.boxplot(data_per_config, tick_labels=labels, showmeans=True)
+            ax.set_ylabel(metric)
+            ax.set_title(f'{metric} across configurations ({checkpoint_type})')
+            ax.tick_params(axis='x', rotation=45)
+            fig.tight_layout()
+            out_path = os.path.join(out_dir, f'boxplot_{metric}.png')
+            fig.savefig(out_path, dpi=150)
+            plt.close(fig)
+            print(f"Saved {out_path}")
+        except Exception as ex:
+            log_error(f"Failed to build boxplot for {metric}: {ex}\n{traceback.format_exc(limit=5)}")

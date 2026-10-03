@@ -1,0 +1,21 @@
+# D4: Phase loss, batch 16, high learning rate.
+experiment_id: 4
+name: D4_ROI256_PhaseLoss_LRHigh
+seed: 0
+
+data:
+  folders: [noPhase, phase, synthetic]   # every .npy file in these folders is used
+  roi_size: 256
+  roi_mode: center
+  n_bscans_per_volume: 40
+
+training:
+  epochs: 80
+  batch_size: 16
+  lr: 8.0e-5
+  num_time_steps: 1000
+  beta_start: 1.0e-4   # linear schedule; fixed in octmirror.models.diffusion.DDPMScheduler
+  beta_end: 0.02
+  ema_decay: 0.9999
+  use_phase_loss: true
+  lambda_phase_diff: 20.0

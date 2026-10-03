@@ -22,7 +22,7 @@ dependencies = [
     "scikit-image",
     "opencv-python",
     "pandas",
-    "matplotlib",
+    "matplotlib>=3.9",
     "tqdm",
     "einops",
     "timm",

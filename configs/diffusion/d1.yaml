@@ -1,0 +1,21 @@
+# D1: No phase loss (model reported in the paper).
+experiment_id: 1
+name: D1_ROI256_NoPhase
+seed: 0
+
+data:
+  folders: [noPhase, phase, synthetic]   # every .npy file in these folders is used
+  roi_size: 256
+  roi_mode: center
+  n_bscans_per_volume: 40
+
+training:
+  epochs: 80
+  batch_size: 8
+  lr: 2.0e-5
+  num_time_steps: 1000
+  beta_start: 1.0e-4   # linear schedule; fixed in octmirror.models.diffusion.DDPMScheduler
+  beta_end: 0.02
+  ema_decay: 0.9999
+  use_phase_loss: false
+  lambda_phase_diff: 0.0
