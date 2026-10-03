@@ -158,3 +158,12 @@ def scale_limits(cx: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     """Per-slice log10-amplitude limits ``(smax, smin)`` of one complex B-scan, shape (1, 1, 1)."""
     _, smax, smin, _, _ = log_scale(cx[np.newaxis, ...])
     return smax, smin
+
+
+def evaluate_diffusion(*args, **kwargs):
+    """Evaluation of the diffusion ablations (D1-D4) on the validation set.
+
+    Not part of this release: only training and inference code are provided for the
+    diffusion model.
+    """
+    raise NotImplementedError  # TODO: pending the authors' diffusion evaluation code
