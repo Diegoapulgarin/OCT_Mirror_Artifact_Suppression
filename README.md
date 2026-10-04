@@ -1,4 +1,4 @@
-# OCT Mirror Artifact Suppression
+# Amplitude-Phase Trade-offs in Deep Learning Reconstruction for Mirror Artifact Suppression in Optical Coherence Tomography
 
 Official code for **"Amplitude-Phase Trade-offs in Deep Learning Reconstruction for Mirror Artifact Suppression in Optical Coherence Tomography"**.
 
